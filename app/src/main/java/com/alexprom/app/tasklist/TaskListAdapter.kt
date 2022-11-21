@@ -1,17 +1,26 @@
+import android.content.ClipData
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.alexprom.app.R
 import com.alexprom.app.tasklist.Task
 
-// l'IDE va râler ici car on a pas encore implémenté les méthodes nécessaires
-class TaskListAdapter : RecyclerView.Adapter<TaskListAdapter.TaskViewHolder>() {
+object TasksDiffCallback : DiffUtil.ItemCallback<Task>() {
+    override fun areItemsTheSame(oldTask: Task, newTask: Task): Boolean {
+        return (oldTask.id == newTask.id)
+    }
 
-    var currentList: List<Task> = emptyList()
+    override fun areContentsTheSame(oldTask: Task, newTask: Task): Boolean {
+        return (oldTask == newTask)
+    }
+}
 
-    // on utilise `inner` ici afin d'avoir accès aux propriétés de l'adapter directement
+class TaskListAdapter : ListAdapter<Task, TaskListAdapter.TaskViewHolder>(TasksDiffCallback) {
+
     inner class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(task: Task) {
             val textView = itemView.findViewById<TextView>(R.id.task_title)
@@ -26,10 +35,6 @@ class TaskListAdapter : RecyclerView.Adapter<TaskListAdapter.TaskViewHolder>() {
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         holder.bind(currentList[position]);
-    }
-
-    override fun getItemCount(): Int {
-        return currentList.size;
     }
 
 

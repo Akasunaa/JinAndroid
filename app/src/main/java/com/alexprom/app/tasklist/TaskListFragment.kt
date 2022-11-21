@@ -20,13 +20,9 @@ class TaskListFragment : Fragment() {
     )
     private val adapter = TaskListAdapter()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_task_list, container, false)
-        adapter.currentList = taskList
+        adapter.submitList(taskList)
         return rootView
 
     }
@@ -44,7 +40,7 @@ class TaskListFragment : Fragment() {
     }
 
     fun RefreshAdapter(){
-        adapter.currentList = taskList
+        adapter.submitList(taskList)
         adapter.notifyDataSetChanged()
     }
 
