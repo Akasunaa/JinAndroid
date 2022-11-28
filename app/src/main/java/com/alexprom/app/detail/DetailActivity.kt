@@ -17,17 +17,11 @@ import java.util.*
 class DetailActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             val validateTask = {
                     task : Task -> intent.putExtra("task",task)
                     setResult(RESULT_OK, intent)
                     finish()
-            }
-            val editTask = {
-                    task : Task -> intent.putExtra("task",task)
-                setResult(RESULT_OK, intent)
-                finish()
             }
             AlexPromAppTheme {
                 // A surface container using the 'background' color from the theme
