@@ -24,8 +24,6 @@ class TaskListFragment : Fragment() {
     )
     private val adapter = TaskListAdapter()
     private var binding: FragmentTaskListBinding? = null
-    //private val intent = Intent(context, DetailActivity::class.java)
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         adapter.submitList(taskList)
         adapter.onClickDelete = {task -> taskList = taskList - task; RefreshAdapter()}
@@ -36,11 +34,14 @@ class TaskListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
         binding?.recycleView?.adapter = adapter
         binding?.floatingActionButton?.setOnClickListener{
             val newTask = Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}")
             taskList = taskList + newTask
             RefreshAdapter()
+            val intent = Intent(context, DetailActivity::class.java)
+            startActivity(intent)
         }
     }
 

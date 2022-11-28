@@ -22,7 +22,7 @@ class DetailActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting("Android")
+                    Detail("Android")
                 }
             }
         }
@@ -30,14 +30,14 @@ class DetailActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String) {
+fun Detail(name: String) {
     Text(text = "Hello $name!")
 }
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
+fun DetailPreview() {
     AlexPromAppTheme {
-        Greeting("Android")
+        Detail("Android")
     }
 }
