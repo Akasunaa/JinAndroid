@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.alexprom.app.R
@@ -24,6 +25,18 @@ class TaskListFragment : Fragment() {
     )
     private val adapter = TaskListAdapter()
     private var binding: FragmentTaskListBinding? = null
+    val intent = Intent(context, DetailActivity::class.java)
+
+    val createTask = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            result -> val task = result.data?.getSerializableExtra("task") as Task;
+            taskList = taskList + task;
+            RefreshAdapter()
+    }
+    val editTask =  registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+             result->  val task = intent.getSerializableExtra("task") as Task;
+        RefreshAdapter()
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         adapter.submitList(taskList)
         adapter.onClickDelete = {task -> taskList = taskList - task; RefreshAdapter()}
@@ -34,14 +47,16 @@ class TaskListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        //val intent = Intent(context, DetailActivity::class.java)
 
         binding?.recycleView?.adapter = adapter
         binding?.floatingActionButton?.setOnClickListener{
-            val newTask = Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}")
-            taskList = taskList + newTask
-            RefreshAdapter()
-            val intent = Intent(context, DetailActivity::class.java)
-            startActivity(intent)
+            //val newTask = Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}")
+            //taskList = taskList + newTask
+            //RefreshAdapter()
+            //startActivity(intent)
+            createTask.launch(intent)
+            editTask.launch(intent)
         }
     }
 

@@ -2,5 +2,6 @@
     <string name="app_name">AlexPromApp</string>
     <string name="add_button">Add Task</string>
     <string name="delete_button">Delete Task</string>
+    <string name="edit_button">Edit Task</string>
     <string name="title_activity_detail">DetailActivity</string>
 </resources>
