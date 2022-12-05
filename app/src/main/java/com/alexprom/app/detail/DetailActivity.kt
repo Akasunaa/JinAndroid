@@ -35,22 +35,24 @@ class DetailActivity : ComponentActivity() {
             }
         }
     }
+
 }
 
 @Composable
 fun Detail(onValidate: (Task) -> Unit, initialTask : Task? ) {
-    var newTask by remember { mutableStateOf(Task(id = initialTask?.id ?: UUID.randomUUID().toString(), title = "New Task !"))}
+    val newTask = Task(id = UUID.randomUUID().toString(), title = "New Task !")
+    var task by remember { mutableStateOf(initialTask?:newTask)}
     Column(Modifier.padding(16.dp),Arrangement.spacedBy(space = 16.dp)) {
         Text("Task Detail", style = MaterialTheme.typography.h1)
         OutlinedTextField(
-            value = initialTask?.title ?: newTask.title,
-            onValueChange = { newTask = newTask.copy(title = it) },
+            value = task.title,
+            onValueChange = { task = task.copy(title = it) },
             label = { Text("Title")})
         OutlinedTextField(
-            value = initialTask?.description ?: newTask.description,
-            onValueChange = {newTask = newTask.copy(description = it) },
+            value = task.description,
+            onValueChange = {task = task.copy(description = it) },
             label = { Text("Description")})
-        Button(onClick = { onValidate(newTask);}) { Text("Valider") }
+        Button(onClick = { onValidate(task);}) { Text("Valider") }
     }
 
 }

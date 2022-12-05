@@ -19,7 +19,6 @@ class TaskListFragment : Fragment() {
     )
     private val adapter = TaskListAdapter()
     private var binding: FragmentTaskListBinding? = null
-    lateinit var intent: Intent
 
     val createTask = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val task = result.data?.getSerializableExtra("task") as Task
@@ -43,6 +42,7 @@ class TaskListFragment : Fragment() {
             adapter.submitList(taskList)
         }
         adapter.onClickEdit = { task ->
+            val intent = Intent(context, DetailActivity::class.java)
             intent.putExtra("task", task)
             editTask.launch(intent)
         }
@@ -52,7 +52,7 @@ class TaskListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        intent = Intent(context, DetailActivity::class.java)
+        val intent = Intent(context, DetailActivity::class.java)
         binding?.recycleView?.adapter = adapter
         binding?.floatingActionButton?.setOnClickListener{
             createTask.launch(intent)
