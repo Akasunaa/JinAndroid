@@ -23,13 +23,14 @@ class DetailActivity : ComponentActivity() {
                     setResult(RESULT_OK, intent)
                     finish()
             }
+            val task = intent.getSerializableExtra("task") as Task?;
             AlexPromAppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Detail(validateTask,null)
+                    Detail(validateTask,task)
                 }
             }
         }
@@ -42,18 +43,17 @@ fun Detail(onValidate: (Task) -> Unit, initialTask : Task? ) {
     Column(Modifier.padding(16.dp),Arrangement.spacedBy(space = 16.dp)) {
         Text("Task Detail", style = MaterialTheme.typography.h1)
         OutlinedTextField(
-            value = newTask.title,
+            value = initialTask?.title ?: newTask.title,
             onValueChange = { newTask = newTask.copy(title = it) },
             label = { Text("Title")})
         OutlinedTextField(
-            value = newTask.description,
+            value = initialTask?.description ?: newTask.description,
             onValueChange = {newTask = newTask.copy(description = it) },
             label = { Text("Description")})
         Button(onClick = { onValidate(newTask);}) { Text("Valider") }
     }
 
 }
-
 
 @Preview(showBackground = true)
 @Composable

@@ -3,19 +3,13 @@ package com.alexprom.app.tasklist
 import TaskListAdapter
 import android.content.Intent
 import android.os.Bundle
-import android.renderscript.ScriptGroup.Binding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
-import com.alexprom.app.R
 import com.alexprom.app.databinding.FragmentTaskListBinding
 import com.alexprom.app.detail.DetailActivity
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import java.util.*
 
 class TaskListFragment : Fragment() {
     private var taskList = listOf(
@@ -27,32 +21,37 @@ class TaskListFragment : Fragment() {
     private var binding: FragmentTaskListBinding? = null
     lateinit var intent: Intent
 
-    val createTask = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            result -> val task = result.data?.getSerializableExtra("task") as Task;
-            taskList = taskList + task;
+    val createTask = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = result.data?.getSerializableExtra("task") as Task
+        taskList = taskList + task;
         adapter.submitList(taskList)
     }
-    val editTask =  registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-             result->  val task = intent.getSerializableExtra("task") as Task;
+    val editTask =  registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = result.data?.getSerializableExtra("task") as Task
         taskList = taskList.map { if (it.id == task.id) task else it }
         adapter.submitList(taskList)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         adapter.submitList(taskList)
-        adapter.onClickDelete = {task -> taskList = taskList - task; adapter.submitList(taskList)}
-        adapter.onClickEdit = {task ->
-            intent.putExtra("task",task)
+        adapter.onClickDelete = { task ->
+            taskList = taskList - task
+            adapter.submitList(taskList)
+        }
+        adapter.onClickEdit = { task ->
+            intent.putExtra("task", task)
             editTask.launch(intent)
         }
         binding = FragmentTaskListBinding.inflate(layoutInflater)
-        val rootView = binding?.root
-        return rootView
+        return binding?.root
 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        //val intent = Intent(context, DetailActivity::class.java)
         intent = Intent(context, DetailActivity::class.java)
         binding?.recycleView?.adapter = adapter
         binding?.floatingActionButton?.setOnClickListener{
