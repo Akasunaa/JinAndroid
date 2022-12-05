@@ -8,8 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.alexprom.app.data.Api
 import com.alexprom.app.databinding.FragmentTaskListBinding
 import com.alexprom.app.detail.DetailActivity
+import kotlinx.coroutines.launch
 
 class TaskListFragment : Fragment() {
     private var taskList = listOf(
@@ -19,6 +23,8 @@ class TaskListFragment : Fragment() {
     )
     private val adapter = TaskListAdapter()
     private var binding: FragmentTaskListBinding? = null
+    private val viewModel: TasksListViewModel by viewModels()
+
 
     val createTask = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val task = result.data?.getSerializableExtra("task") as Task
@@ -57,6 +63,24 @@ class TaskListFragment : Fragment() {
         binding?.floatingActionButton?.setOnClickListener{
             createTask.launch(intent)
         }
+        lifecycleScope.launch { // on lance une coroutine car `collect` est `suspend`
+            viewModel.tasksStateFlow.collect { newList ->
+                // cette lambda est executée à chaque fois que la liste est mise à jour dans le VM
+                // -> ici, on met à jour la liste dans l'adapter
+                adapter.submitList(newList)
+            }
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.refresh()
+        lifecycleScope.launch {
+            val user = Api.userWebService.fetchUser().body()!!
+            binding?.usernameTextView?.text = user.name
+        }
+
     }
 
 }
