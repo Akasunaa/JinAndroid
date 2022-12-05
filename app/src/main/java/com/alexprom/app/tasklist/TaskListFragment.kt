@@ -30,17 +30,21 @@ class TaskListFragment : Fragment() {
     val createTask = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             result -> val task = result.data?.getSerializableExtra("task") as Task;
             taskList = taskList + task;
-            RefreshAdapter()
+        adapter.submitList(taskList)
     }
     val editTask =  registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
              result->  val task = intent.getSerializableExtra("task") as Task;
-            RefreshAdapter()
+        taskList = taskList.map { if (it.id == task.id) task else it }
+        adapter.submitList(taskList)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         adapter.submitList(taskList)
-        adapter.onClickDelete = {task -> taskList = taskList - task; RefreshAdapter()}
-        adapter.onClickEdit = {task -> editTask(task)}
+        adapter.onClickDelete = {task -> taskList = taskList - task; adapter.submitList(taskList)}
+        adapter.onClickEdit = {task ->
+            intent.putExtra("task",task)
+            editTask.launch(intent)
+        }
         binding = FragmentTaskListBinding.inflate(layoutInflater)
         val rootView = binding?.root
         return rootView
@@ -52,18 +56,8 @@ class TaskListFragment : Fragment() {
         intent = Intent(context, DetailActivity::class.java)
         binding?.recycleView?.adapter = adapter
         binding?.floatingActionButton?.setOnClickListener{
-            //val newTask = Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}")
-            //taskList = taskList + newTask
-            //RefreshAdapter()
-            //startActivity(intent)
             createTask.launch(intent)
-            editTask.launch(intent)
         }
-    }
-
-    fun RefreshAdapter(){
-        adapter.submitList(taskList)
-        adapter.notifyDataSetChanged()
     }
 
 }

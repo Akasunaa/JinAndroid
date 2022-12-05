@@ -29,7 +29,7 @@ class DetailActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Detail(validateTask)
+                    Detail(validateTask,null)
                 }
             }
         }
@@ -37,8 +37,8 @@ class DetailActivity : ComponentActivity() {
 }
 
 @Composable
-fun Detail(onValidate: (Task) -> Unit ) {
-    var newTask by remember { mutableStateOf(Task(id = UUID.randomUUID().toString(), title = "New Task !"))}
+fun Detail(onValidate: (Task) -> Unit, initialTask : Task? ) {
+    var newTask by remember { mutableStateOf(Task(id = initialTask?.id ?: UUID.randomUUID().toString(), title = "New Task !"))}
     Column(Modifier.padding(16.dp),Arrangement.spacedBy(space = 16.dp)) {
         Text("Task Detail", style = MaterialTheme.typography.h1)
         OutlinedTextField(
@@ -59,6 +59,5 @@ fun Detail(onValidate: (Task) -> Unit ) {
 @Composable
 fun DetailPreview() {
     AlexPromAppTheme {
-        //Detail()
     }
 }
