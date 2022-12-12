@@ -16,11 +16,6 @@ import com.alexprom.app.detail.DetailActivity
 import kotlinx.coroutines.launch
 
 class TaskListFragment : Fragment() {
-    private var taskList = listOf(
-        Task(id = "id_1", title = "Task 1", description = "description 1"),
-        Task(id = "id_2", title = "Task 2"),
-        Task(id = "id_3", title = "Task 3"),
-    )
     private val adapter = TaskListAdapter()
     private var binding: FragmentTaskListBinding? = null
     private val viewModel: TasksListViewModel by viewModels()
@@ -28,13 +23,11 @@ class TaskListFragment : Fragment() {
 
     val createTask = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val task = result.data?.getSerializableExtra("task") as Task
-        taskList = taskList + task;
-        adapter.submitList(taskList)
+        viewModel.add(task)
     }
     val editTask =  registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val task = result.data?.getSerializableExtra("task") as Task
-        taskList = taskList.map { if (it.id == task.id) task else it }
-        adapter.submitList(taskList)
+        viewModel.edit(task)
     }
 
     override fun onCreateView(
@@ -42,10 +35,8 @@ class TaskListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        adapter.submitList(taskList)
         adapter.onClickDelete = { task ->
-            taskList = taskList - task
-            adapter.submitList(taskList)
+            viewModel.remove(task)
         }
         adapter.onClickEdit = { task ->
             val intent = Intent(context, DetailActivity::class.java)
@@ -80,7 +71,6 @@ class TaskListFragment : Fragment() {
             val user = Api.userWebService.fetchUser().body()!!
             binding?.usernameTextView?.text = user.name
         }
-
     }
 
 }
