@@ -10,9 +10,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import coil.load
+import com.alexprom.app.R
 import com.alexprom.app.data.Api
 import com.alexprom.app.databinding.FragmentTaskListBinding
 import com.alexprom.app.detail.DetailActivity
+import com.alexprom.app.user.UserActivity
 import kotlinx.coroutines.launch
 
 class TaskListFragment : Fragment() {
@@ -28,6 +31,9 @@ class TaskListFragment : Fragment() {
     val editTask =  registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val task = result.data?.getSerializableExtra("task") as Task
         viewModel.edit(task)
+    }
+
+    val editAvatar  = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
     }
 
     override fun onCreateView(
@@ -49,10 +55,11 @@ class TaskListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val intent = Intent(context, DetailActivity::class.java)
+        val detailIntent = Intent(context, DetailActivity::class.java)
+        val userIntent = Intent(context, UserActivity::class.java)
         binding?.recycleView?.adapter = adapter
         binding?.floatingActionButton?.setOnClickListener{
-            createTask.launch(intent)
+            createTask.launch(detailIntent)
         }
         lifecycleScope.launch { // on lance une coroutine car `collect` est `suspend`
             viewModel.tasksStateFlow.collect { newList ->
@@ -62,15 +69,27 @@ class TaskListFragment : Fragment() {
             }
         }
 
+        binding?.imageView?.setOnClickListener{
+            editAvatar.launch(userIntent)
+        }
+
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.refresh()
+        val imageView = binding?.imageView
         lifecycleScope.launch {
             val user = Api.userWebService.fetchUser().body()!!
             binding?.usernameTextView?.text = user.name
-        }
-    }
 
+            imageView?.load(user.avatar) {
+                error(R.drawable.ic_launcher_background) // image par défaut en cas d'erreur
+            }
+        }
+
+        //imageView?.load("https://goo.gl/gEgYUd")
+
+
+    }
 }
