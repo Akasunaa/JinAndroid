@@ -37,23 +37,12 @@ class UserActivity : ComponentActivity() {
             var bitmap: Bitmap? by remember { mutableStateOf(null) }
             var uri: Uri? by remember { mutableStateOf(null) }
 
-            /*val takePicture = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
-                bitmap = it
-                val multiPartBody = bitmap?.toRequestBody()
-                lifecycleScope.launch {
-                    multiPartBody?.let { it1 -> Api.userWebService.updateAvatar(it1).body() }!!
-                    //is it OK ?
-                }
-            }*/
-
             val takePicture = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
                 if (success) uri = captureUri
                 val multiPartBody = uri?.toRequestBody()
                 lifecycleScope.launch {
                     multiPartBody?.let { it1 -> Api.userWebService.updateAvatar(it1).body() }!!
-                    //is it OK ?
                 }
-
             }
 
             val pickPicture = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) {
@@ -61,9 +50,7 @@ class UserActivity : ComponentActivity() {
                 val multiPartBody = uri?.toRequestBody()
                 lifecycleScope.launch {
                     multiPartBody?.let { it1 -> Api.userWebService.updateAvatar(it1).body() }!!
-                    //is it OK ?
                 }
-
             }
 
             val requestReadPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()){

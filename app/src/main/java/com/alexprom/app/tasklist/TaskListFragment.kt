@@ -23,7 +23,6 @@ class TaskListFragment : Fragment() {
     private var binding: FragmentTaskListBinding? = null
     private val viewModel: TasksListViewModel by viewModels()
 
-
     val createTask = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val task = result.data?.getSerializableExtra("task") as Task
         viewModel.add(task)
@@ -33,8 +32,7 @@ class TaskListFragment : Fragment() {
         viewModel.edit(task)
     }
 
-    val editAvatar  = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
-    }
+    val editAvatar  = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ _ -> }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,7 +49,6 @@ class TaskListFragment : Fragment() {
         }
         binding = FragmentTaskListBinding.inflate(layoutInflater)
         return binding?.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -87,9 +84,5 @@ class TaskListFragment : Fragment() {
                 error(R.drawable.ic_launcher_background) // image par défaut en cas d'erreur
             }
         }
-
-        //imageView?.load("https://goo.gl/gEgYUd")
-
-
     }
 }
